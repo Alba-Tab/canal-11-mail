@@ -20,6 +20,7 @@ Lo que rige el código. Los análisis completos están en `../../docs/revision_g
 | D12 | `CommandProcessor` abre y cierra la transacción; la bitácora se escribe en otra transacción, siempre | Si el comando falla, igual queda registrado (R2) | 13/10/2026 |
 | D13 | Los errores de PostgreSQL pasan por `TraductorErrores` (nombre de la restricción → mensaje); nunca se reenvía el texto crudo | Mensajes claros (RNF-22) y no mostrar detalles internos | 13/10/2026 |
 | D14 | **El Jefe de Prensa redacta notas** (antes H3). Tiene ficha de personal con el cargo nuevo `jefe_prensa` y el permiso ENVNOT. Su nota sigue el mismo flujo que las demás: INSNOT → ENVNOT → APRNOT u OBSNOT | `nota.autor_id` exige una ficha de personal; así no cambia la tabla `nota` y el historial de revisión queda igual para todos | 13/10/2026 |
+| D15 | El asunto se lee con tolerancia: se quitan `Re:`, `RV:`, `Fwd:` (también repetidos y `RE[2]:`); las comillas tipográficas cuentan como rectas; el código puede ir en minúsculas; se aceptan espacios entre parámetros y parámetros sin comillas si no tienen comas (`DELUSU[3]`); el texto después de `]` se ignora. **Una comilla dentro de un parámetro es error de formato** (antes L8) | Los clientes de correo reales (iPhone, respuestas, asuntos partidos) y la regla de «aceptar de todo» | 13/10/2026 |
 
 ## Pendientes
 
@@ -28,7 +29,6 @@ Cada una tiene una propuesta. Si nadie del grupo objeta antes de la rama indicad
 | # | Tema | Propuesta | Se decide antes de |
 |---|---|---|---|
 | M8 | Respuesta a AYUDA de un remitente no registrado | «No está registrado en el sistema. Contacte al Director del canal.» | `feat/bucle-principal` |
-| L8 | Comillas `"` dentro de un parámetro | No se admiten: error de formato con un ejemplo | `feat/parser-comandos` |
 | — | Un parámetro vacío `""` en un UPD | Significa «no cambiar» (`col = COALESCE(?, col)`) | `feat/procesador-y-ayuda` |
 | M4 | Volver atrás: reactivar un usuario, una ficha o un programa; devolver a `programado` un ítem flotado | Los UPD de esas tablas aceptan `estado`; UPDITE acepta `programado` | `feat/cu01-usuarios` |
 | L6 | INSCPE: ¿la función debe coincidir con el cargo? | Sí, salvo `conductor`, que también puede hacerlo un presentador | `feat/cu04-coberturas` |
