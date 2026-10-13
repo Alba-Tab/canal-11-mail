@@ -21,3 +21,8 @@ nbproject/private/
 
 # Sistema
 .DS_Store
+
+# Archivos internos del grupo (reglas, avance y cambios): no se versionan
+CLAUDE.md
+ROADMAP.md
+CHANGELOG.md

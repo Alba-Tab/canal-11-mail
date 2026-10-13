@@ -17,7 +17,7 @@ Son 112 comandos más AYUDA, repartidos en 8 casos de uso: usuarios, personal y 
 
 ## Estado
 
-En desarrollo. El avance por rama está en [ROADMAP.md](ROADMAP.md) y los cambios en [CHANGELOG.md](CHANGELOG.md).
+En desarrollo.
 
 ## Requisitos
 
@@ -55,9 +55,6 @@ El log va a la consola y a `logs/canal11.0.log`.
 
 ```
 canal11-mail/
-├── CLAUDE.md            reglas del proyecto (git, código, seguridad)
-├── ROADMAP.md           ramas en orden de prioridad
-├── CHANGELOG.md         cambios por versión
 ├── docs/DECISIONES.md   decisiones técnicas y pendientes
 ├── db/                  script de la BD, datos de prueba, consultas y pruebas de integridad
 ├── pom.xml, mvnw       build con Maven Wrapper (Java 17)
@@ -71,7 +68,6 @@ canal11-mail/
 
 ## Cómo se trabaja
 
-El flujo de git y las reglas de código están en [CLAUDE.md](CLAUDE.md). En resumen:
 - `main` recibe solo las entregas.
 - Se trabaja en ramas `feat/`, `fix/`, `chore/` o `docs/` que salen de `develop`.
 - Cada rama vuelve a `develop` con `git merge --no-ff`, después de que pasan las pruebas.
