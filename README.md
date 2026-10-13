@@ -29,6 +29,28 @@ En desarrollo. El avance por rama está en [ROADMAP.md](ROADMAP.md) y los cambio
 
 Maven no hace falta: el repositorio trae el Maven Wrapper (`./mvnw`).
 
+## Compilar y probar
+
+```bash
+./mvnw verify
+```
+
+Compila, corre las pruebas y deja un solo jar con todo adentro en `target/canal11-mail.jar`.
+
+## Configurar y correr
+
+```bash
+cp config.example.properties config.properties
+```
+
+Completar `config.properties` con las contraseñas del buzón y de la base de datos. No se versiona; en el servidor, darle permisos `600`.
+
+```bash
+java -Duser.timezone=America/La_Paz -jar target/canal11-mail.jar config.properties
+```
+
+El log va a la consola y a `logs/canal11.0.log`.
+
 ## Estructura
 
 ```
@@ -38,7 +60,13 @@ canal11-mail/
 ├── CHANGELOG.md         cambios por versión
 ├── docs/DECISIONES.md   decisiones técnicas y pendientes
 ├── db/                  script de la BD, datos de prueba, consultas y pruebas de integridad
-└── src/                 código Java (Presentación, Negocio y Datos)
+├── pom.xml, mvnw       build con Maven Wrapper (Java 17)
+└── src/main/java/bo/edu/uagrm/ficct/canal11/
+    ├── App.java         arranque
+    ├── config/          configuración y log
+    ├── presentacion/    MailVerificationThread, SendEmailThread y clientes POP3/SMTP
+    ├── negocio/         CommandParser, CommandProcessor, HTMLResponseBuilder y catálogo de comandos
+    └── datos/           DBConnection, repositorio y traductor de errores
 ```
 
 ## Cómo se trabaja
