@@ -7,7 +7,7 @@ Scripts de PostgreSQL del sistema. **Son la fuente de verdad**: el script es el 
 | Archivo | Contenido |
 |---|---|
 | `script_db_grupo14sa.sql` | Borra y crea las 26 tablas, sus restricciones con nombre (`ck_*`, `uq_*`, `ux_*`), los índices y las 8 vistas de cálculo |
-| `datos_prueba.sql` | Datos de la demo: 7 roles, 15 usuarios, 112 permisos y 205 asignaciones rol–permiso, personal, recursos, coberturas, notas y escaletas. Las fechas son relativas a `CURRENT_DATE`, así que la demo funciona cualquier día |
+| `datos_prueba.sql` | Datos de la demo: 7 roles, 15 usuarios, 112 permisos y 206 asignaciones rol–permiso, personal, recursos, coberturas, notas y escaletas. Las fechas son relativas a `CURRENT_DATE`, así que la demo funciona cualquier día |
 | `consultas_negocio.sql` | Las consultas que usa la capa de Negocio, probadas con variables de psql (`:variable` = `?` del `PreparedStatement`). Las que modifican datos van dentro de `BEGIN … ROLLBACK` |
 | `pruebas_integridad.sql` | 21 pruebas automáticas de las restricciones (OK / FALLA). No dejan cambios: todo se deshace al final |
 

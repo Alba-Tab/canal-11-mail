@@ -90,8 +90,8 @@ CREATE TABLE turno (
 CREATE TABLE personal (
     id                   SERIAL PRIMARY KEY,
     usuario_id           INTEGER     NOT NULL UNIQUE REFERENCES usuario(id) ON UPDATE CASCADE ON DELETE RESTRICT,
-    cargo                VARCHAR(20) NOT NULL  -- conductor = conductor de TV (no chofer)
-                         CHECK (cargo IN ('periodista','camarografo','editor','presentador','conductor')),
+    cargo                VARCHAR(20) NOT NULL  -- conductor = conductor de TV (no chofer); jefe_prensa: también redacta notas
+                         CHECK (cargo IN ('periodista','camarografo','editor','presentador','conductor','jefe_prensa')),
     condicion_laboral    VARCHAR(15) NOT NULL
                          CHECK (condicion_laboral IN ('planta','contrato','practicante')),
     unidad_academica     VARCHAR(150),  -- solo practicantes

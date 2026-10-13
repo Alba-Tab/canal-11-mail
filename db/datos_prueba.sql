@@ -273,6 +273,7 @@ SELECT r.id, p.id FROM (VALUES
  ('Periodista', 'GUINOT'),
  ('Jefe de Prensa', 'LISVER'),
  ('Periodista', 'LISVER'),
+ ('Jefe de Prensa', 'ENVNOT'),
  ('Periodista', 'ENVNOT'),
  ('Jefe de Prensa', 'APRNOT'),
  ('Jefe de Prensa', 'OBSNOT'),
@@ -387,7 +388,8 @@ INSERT INTO personal (usuario_id, cargo, condicion_laboral, unidad_academica, tu
  (11, 'editor',      'practicante', 'Comunicación Social - Fac. de Humanidades', 6, '2026-08-01'), -- 9 Andrés Parada
  (12, 'presentador', 'planta',      NULL, 2, '2014-05-20'), -- 10 Mariana Terceros
  (13, 'presentador', 'contrato',    NULL, 2, '2022-02-14'), -- 11 Gonzalo Salvatierra
- (14, 'conductor',   'planta',      NULL, 1, '2012-07-09'); -- 12 Freddy Montaño (conductor de TV)
+ (14, 'conductor',   'planta',      NULL, 1, '2012-07-09'), -- 12 Freddy Montaño (conductor de TV)
+ ( 2, 'jefe_prensa', 'planta',      NULL, 1, '2010-03-01'); -- 13 Roberto Arteaga: el Jefe de Prensa también redacta notas
 
 -- Rangos con fin exclusivo: un día completo va de 00:00 a 00:00 del día siguiente (R11)
 INSERT INTO ausencia (personal_id, tipo, fecha_hora_inicio, fecha_hora_fin, motivo) VALUES
