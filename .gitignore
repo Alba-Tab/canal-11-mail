@@ -1,0 +1,22 @@
+# Build
+target/
+
+# Secretos: solo se versiona config.example.properties
+config.properties
+
+# Ejecución
+*.log
+*.lock
+logs/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+nbproject/private/
+.settings/
+.classpath
+.project
+
+# Sistema
+.DS_Store
