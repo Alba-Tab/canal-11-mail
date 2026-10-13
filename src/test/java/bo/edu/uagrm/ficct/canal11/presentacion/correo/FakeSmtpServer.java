@@ -19,18 +19,18 @@ import java.util.List;
  * <p>Imita a Sendmail de tecnoweb: saludo, EHLO con 8BITMIME y AUTH CRAM-MD5, y «Relaying denied»
  * para los dominios que no son locales si se activa {@link #rechazarReenvio}.</p>
  */
-final class FakeSmtpServer implements AutoCloseable {
+public final class FakeSmtpServer implements AutoCloseable {
 
     /** Un correo recibido. */
-    record Recibido(String remitente, List<String> destinatarios, byte[] datos) {
-        String texto() {
+    public record Recibido(String remitente, List<String> destinatarios, byte[] datos) {
+        public String texto() {
             return new String(datos, StandardCharsets.US_ASCII);
         }
     }
 
-    enum Falla { NINGUNA, SIN_EHLO, SILENCIO_TRAS_SALUDO }
+    public enum Falla { NINGUNA, SIN_EHLO, SILENCIO_TRAS_SALUDO }
 
-    static final String DOMINIO_LOCAL = "tecnoweb.org.bo";
+    public static final String DOMINIO_LOCAL = "tecnoweb.org.bo";
 
     private final ServerSocket servidor;
     private final List<Recibido> recibidos = Collections.synchronizedList(new ArrayList<>());
@@ -41,39 +41,39 @@ final class FakeSmtpServer implements AutoCloseable {
     private volatile int lineaMasLarga;
     private volatile boolean cerrado;
 
-    FakeSmtpServer() throws IOException {
+    public FakeSmtpServer() throws IOException {
         servidor = new ServerSocket(0, 10, InetAddress.getLoopbackAddress());
         Thread hilo = new Thread(this::atender, "fake-smtp");
         hilo.setDaemon(true);
         hilo.start();
     }
 
-    int puerto() {
+    public int puerto() {
         return servidor.getLocalPort();
     }
 
-    void rechazarReenvio(boolean rechazar) {
+    public void rechazarReenvio(boolean rechazar) {
         this.rechazarReenvio = rechazar;
     }
 
-    void falla(Falla f) {
+    public void falla(Falla f) {
         this.falla = f;
     }
 
-    List<Recibido> recibidos() {
+    public List<Recibido> recibidos() {
         return new ArrayList<>(recibidos);
     }
 
-    List<String> comandos() {
+    public List<String> comandos() {
         return new ArrayList<>(comandos);
     }
 
-    int lineasSinCrlf() {
+    public int lineasSinCrlf() {
         return lineasSinCrlf;
     }
 
     /** Largo (sin CRLF) de la línea más larga recibida, comandos y DATA incluidos. Debe ser ≤ 998. */
-    int lineaMasLarga() {
+    public int lineaMasLarga() {
         return lineaMasLarga;
     }
 

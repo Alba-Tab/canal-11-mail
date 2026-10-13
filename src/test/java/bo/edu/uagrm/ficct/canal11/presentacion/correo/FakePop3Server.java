@@ -19,12 +19,12 @@ import java.util.List;
  * <p>Atiende las conexiones de a una, como Dovecot con un buzón bloqueado. Puede simular fallas:
  * buzón en uso, un servidor que no responde y un corte a mitad de un RETR.</p>
  */
-final class FakePop3Server implements AutoCloseable {
+public final class FakePop3Server implements AutoCloseable {
 
-    enum Falla { NINGUNA, BUZON_EN_USO, SILENCIO_TRAS_SALUDO, CORTE_EN_RETR }
+    public enum Falla { NINGUNA, BUZON_EN_USO, SILENCIO_TRAS_SALUDO, CORTE_EN_RETR, QUIT_SIN_CONFIRMAR }
 
-    static final String USUARIO = "grupo14sa";
-    static final String CONTRASENA = "clave-ñ-123";
+    public static final String USUARIO = "grupo14sa";
+    public static final String CONTRASENA = "clave-ñ-123";
 
     private final ServerSocket servidor;
     private final Thread hilo;
@@ -35,42 +35,42 @@ final class FakePop3Server implements AutoCloseable {
     private volatile int lineasSinCrlf;
     private volatile boolean cerrado;
 
-    FakePop3Server() throws IOException {
+    public FakePop3Server() throws IOException {
         servidor = new ServerSocket(0, 10, InetAddress.getLoopbackAddress());
         hilo = new Thread(this::atender, "fake-pop3");
         hilo.setDaemon(true);
         hilo.start();
     }
 
-    int puerto() {
+    public int puerto() {
         return servidor.getLocalPort();
     }
 
-    synchronized void agregar(String mensaje) {
+    public synchronized void agregar(String mensaje) {
         agregar(mensaje.getBytes(StandardCharsets.UTF_8));
     }
 
-    synchronized void agregar(byte[] mensaje) {
+    public synchronized void agregar(byte[] mensaje) {
         mensajes.add(mensaje);
         borrados.add(false);
     }
 
     /** Mensajes que siguen en el buzón (no borrados con DELE + QUIT). */
-    synchronized int mensajesEnBuzon() {
+    public synchronized int mensajesEnBuzon() {
         return (int) borrados.stream().filter(b -> !b).count();
     }
 
-    void falla(Falla f) {
+    public void falla(Falla f) {
         this.falla = f;
     }
 
     /** Comandos recibidos, con la contraseña tal como llegó. */
-    List<String> comandos() {
+    public List<String> comandos() {
         return new ArrayList<>(comandos);
     }
 
     /** Cuántas líneas llegaron terminadas solo en LF, sin el CR. Debe ser 0. */
-    int lineasSinCrlf() {
+    public int lineasSinCrlf() {
         return lineasSinCrlf;
     }
 
@@ -91,7 +91,16 @@ final class FakePop3Server implements AutoCloseable {
     }
 
     private void sesion(InputStream in, OutputStream out) throws IOException {
-        List<Boolean> marcas = new ArrayList<>(Collections.nCopies(mensajes.size(), false));
+        // Como en Dovecot, en cada sesión los mensajes que quedan se numeran desde 1 (RFC 1939, §5)
+        List<Integer> vista = new ArrayList<>();
+        synchronized (this) {
+            for (int i = 0; i < mensajes.size(); i++) {
+                if (!borrados.get(i)) {
+                    vista.add(i);
+                }
+            }
+        }
+        List<Boolean> marcas = new ArrayList<>(Collections.nCopies(vista.size(), false));
         escribir(out, "+OK Dovecot ready.");
         if (falla == Falla.SILENCIO_TRAS_SALUDO) {
             while (in.read() != -1) {
@@ -123,10 +132,15 @@ final class FakePop3Server implements AutoCloseable {
                     }
                 }
                 case "QUIT" -> {
+                    if (falla == Falla.QUIT_SIN_CONFIRMAR) {
+                        // el servidor falla al aplicar los DELE: no borra nada
+                        escribir(out, "-ERR [SYS/TEMP] Internal error occurred.");
+                        return;
+                    }
                     synchronized (this) {
-                        for (int i = 0; i < marcas.size(); i++) {
-                            if (marcas.get(i)) {
-                                borrados.set(i, true);
+                        for (int n = 0; n < marcas.size(); n++) {
+                            if (marcas.get(n)) {
+                                borrados.set(vista.get(n), true);
                             }
                         }
                     }
@@ -137,7 +151,7 @@ final class FakePop3Server implements AutoCloseable {
                     if (!autenticado) {
                         escribir(out, "-ERR Unknown command.");
                     } else {
-                        comandoAutenticado(cmd, p, marcas, out);
+                        comandoAutenticado(cmd, p, vista, marcas, out);
                     }
                 }
             }
@@ -145,35 +159,36 @@ final class FakePop3Server implements AutoCloseable {
         // Se cortó sin QUIT: las marcas de DELE se descartan
     }
 
-    private synchronized void comandoAutenticado(String cmd, String[] p, List<Boolean> marcas, OutputStream out)
-            throws IOException {
+    private synchronized void comandoAutenticado(String cmd, String[] p, List<Integer> vista, List<Boolean> marcas,
+                                                 OutputStream out) throws IOException {
         switch (cmd) {
             case "STAT" -> {
                 int n = 0;
                 long octetos = 0;
-                for (int i = 0; i < mensajes.size(); i++) {
-                    if (visible(i, marcas)) {
+                for (int i = 0; i < vista.size(); i++) {
+                    if (!marcas.get(i)) {
                         n++;
-                        octetos += mensajes.get(i).length;
+                        octetos += mensajes.get(vista.get(i)).length;
                     }
                 }
                 escribir(out, "+OK " + n + " " + octetos);
             }
             case "LIST", "UIDL", "RETR", "TOP", "DELE" -> {
-                int i = numero(p) - 1;
-                if (i < 0 || i >= mensajes.size() || !visible(i, marcas)) {
+                int n = numero(p) - 1;
+                if (n < 0 || n >= vista.size() || marcas.get(n)) {
                     escribir(out, "-ERR No such message");
                     return;
                 }
+                byte[] mensaje = mensajes.get(vista.get(n));
                 switch (cmd) {
-                    case "LIST" -> escribir(out, "+OK " + (i + 1) + " " + mensajes.get(i).length);
-                    case "UIDL" -> escribir(out, "+OK " + (i + 1) + " uid-" + (i + 1));
+                    case "LIST" -> escribir(out, "+OK " + (n + 1) + " " + mensaje.length);
+                    case "UIDL" -> escribir(out, "+OK " + (n + 1) + " uid-" + (vista.get(n) + 1));
                     case "DELE" -> {
-                        marcas.set(i, true);
+                        marcas.set(n, true);
                         escribir(out, "+OK Marked to be deleted.");
                     }
-                    case "RETR" -> enviarMensaje(out, mensajes.get(i), Integer.MAX_VALUE, falla == Falla.CORTE_EN_RETR);
-                    default -> enviarMensaje(out, mensajes.get(i), Integer.parseInt(p[2].trim()), false);
+                    case "RETR" -> enviarMensaje(out, mensaje, Integer.MAX_VALUE, falla == Falla.CORTE_EN_RETR);
+                    default -> enviarMensaje(out, mensaje, Integer.parseInt(p[2].trim()), false);
                 }
             }
             case "NOOP" -> escribir(out, "+OK");
@@ -183,10 +198,6 @@ final class FakePop3Server implements AutoCloseable {
             }
             default -> escribir(out, "-ERR Unknown command.");
         }
-    }
-
-    private boolean visible(int i, List<Boolean> marcas) {
-        return !borrados.get(i) && !marcas.get(i);
     }
 
     private static int numero(String[] p) {
