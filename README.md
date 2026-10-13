@@ -37,6 +37,24 @@ Maven no hace falta: el repositorio trae el Maven Wrapper (`./mvnw`).
 
 Compila, corre las pruebas y deja un solo jar con todo adentro en `target/canal11-mail.jar`.
 
+### Pruebas con base de datos
+
+Las pruebas marcadas `@Tag("bd")` necesitan un PostgreSQL. Sin él se saltan solas. Para correrlas:
+
+```bash
+createdb db_grupo14sa_test
+```
+
+```bash
+export CANAL11_BD_PRUEBA_URL=jdbc:postgresql://localhost:5432/db_grupo14sa_test CANAL11_BD_PRUEBA_USUARIO=postgres CANAL11_BD_PRUEBA_CONTRASENA=
+```
+
+```bash
+./mvnw verify
+```
+
+La primera prueba carga `db/script_db_grupo14sa.sql` y `db/datos_prueba.sql`, y cada prueba deshace sus cambios. Como el script **borra todas las tablas**, solo se acepta una base con «test» en el nombre. También corren las 21 pruebas de `db/pruebas_integridad.sql`.
+
 ## Configurar y correr
 
 ```bash
