@@ -12,6 +12,7 @@ import java.util.logging.FileHandler;
 import java.util.logging.Formatter;
 import java.util.logging.Handler;
 import java.util.logging.Level;
+import java.util.logging.LogManager;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
@@ -47,6 +48,52 @@ public final class Registro {
         archivo.setFormatter(new FormatoLinea(zona));
         archivo.setLevel(Level.ALL);
         Logger.getLogger(RAIZ).addHandler(archivo);
+    }
+
+    /**
+     * Activa {@link GestorLog} como gestor del log. Debe llamarse antes de crear el primer
+     * {@link Logger} del programa (por eso {@code App} lo hace en un bloque estático).
+     */
+    public static void usarGestorPropio() {
+        System.setProperty("java.util.logging.manager", GestorLog.class.getName());
+    }
+
+    /**
+     * Cierra el log (vacía y cierra el archivo). Se llama al final del apagado, después de que los
+     * hilos escribieron sus últimas líneas.
+     */
+    public static void terminar() {
+        LogManager lm = LogManager.getLogManager();
+        if (lm instanceof GestorLog g) {
+            g.cerrarDeVerdad();
+        } else {
+            for (Handler h : Logger.getLogger(RAIZ).getHandlers()) {
+                h.flush();
+            }
+        }
+    }
+
+    /**
+     * Gestor de log que no se cierra solo al apagar la JVM.
+     *
+     * <p>{@code java.util.logging} tiene su propio gancho de apagado que cierra los archivos de log
+     * al mismo tiempo que corre el gancho de la aplicación: así se pierden las últimas líneas
+     * («Deteniendo…», «Lectura del buzón detenida»). Este gestor ignora ese cierre automático y
+     * cierra recién cuando {@code App} llama a {@link Registro#terminar()}.</p>
+     */
+    public static final class GestorLog extends LogManager {
+        public GestorLog() {
+            super();
+        }
+
+        @Override
+        public void reset() {
+            // lo cierra Registro.terminar() al final del apagado
+        }
+
+        void cerrarDeVerdad() {
+            super.reset();
+        }
     }
 
     private static void quitarHandlers(Logger logger) {
