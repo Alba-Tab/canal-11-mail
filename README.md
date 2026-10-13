@@ -69,6 +69,18 @@ java -Duser.timezone=America/La_Paz -jar target/canal11-mail.jar config.properti
 
 El log va a la consola y a `logs/canal11.0.log`.
 
+Qué hace al arrancar:
+- Revisa el buzón cada 30 s (`app.intervalo_segundos`). Saca un correo por sesión POP: `RETR` → `DELE` → `QUIT`, y lo procesa solo si el servidor confirmó el `QUIT`.
+- Responde en HTML desde un segundo hilo.
+- No responde a rebotes, a respuestas automáticas ni a sus propios correos.
+- Los correos de más de 1 MB no se descargan: se responde que no se aceptan adjuntos.
+- Pasa a `en_curso` las coberturas que ya empezaron.
+- Si se cae el buzón o la base de datos, lo anota en el log y reintenta en la vuelta siguiente: no se detiene.
+
+Corre **una sola copia**: si ya hay otra, la segunda avisa y termina (bloqueo en `canal11.lock`). Para detenerla, **Ctrl+C** o `kill`. Termina el correo en curso, envía las respuestas pendientes y escribe «Aplicación detenida» en el log.
+
+Por ahora la respuesta es provisional: identifica al remitente, responde AYUDA y confirma los comandos recibidos. Los comandos se habilitan por caso de uso.
+
 ## Estructura
 
 ```
