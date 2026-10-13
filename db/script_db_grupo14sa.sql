@@ -1,7 +1,7 @@
 -- =====================================================================
 -- Sistema de Gestión de Operaciones y Noticias (NRCS) - Canal 11 TVU
 -- Grupo 14 SA - Tecnología Web (INF513) - II/2026
--- Motor: PostgreSQL (>= 11 por sha256() en los datos de prueba)
+-- Motor: PostgreSQL (probado en la 17)
 -- Servidor: www.tecnoweb.org.bo  -  BD: db_grupo14sa
 -- =====================================================================
 -- Convención de valores de estado/tipo: minúsculas, sin tildes y con
@@ -41,7 +41,7 @@ CREATE TABLE usuario (
     ci              VARCHAR(20)  NOT NULL UNIQUE,
     correo          VARCHAR(150) NOT NULL UNIQUE,
     telefono        VARCHAR(20),
-    password        VARCHAR(255) NOT NULL,  -- hash SHA-256
+    password        VARCHAR(255) NOT NULL,  -- hash bcrypt ($2y$, costo 10)
     estado          VARCHAR(10)  NOT NULL DEFAULT 'activo'
                     CHECK (estado IN ('activo','inactivo')),
     rol_id          INTEGER      NOT NULL REFERENCES rol(id) ON UPDATE CASCADE ON DELETE RESTRICT,

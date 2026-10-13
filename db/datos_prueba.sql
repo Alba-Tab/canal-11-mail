@@ -5,6 +5,9 @@
 -- Las fechas son relativas a CURRENT_DATE para que la demo funcione cualquier día.
 -- Los correos @canal11.test son de ejemplo: reemplazarlos por los correos
 -- reales con los que el grupo va a enviar los comandos.
+-- Contraseña de todas las cuentas de prueba: canal11. Se guarda con bcrypt
+-- ($2y$, costo 10), cada una con su propia sal; los hashes se generaron con
+-- la misma librería que usa la aplicación (at.favre.lib:bcrypt).
 -- =====================================================================
 
 -- ---------- CU-01 ----------
@@ -19,21 +22,21 @@ INSERT INTO rol (nombre, descripcion) VALUES
  ('Jefe de Area Tecnica', 'Área Técnica y de Producción: inventario, entrega/devolución y mantenimiento de equipos y unidades móviles'); -- 7
 
 INSERT INTO usuario (nombre, apellido, ci, correo, telefono, password, rol_id) VALUES
- ('Américo',       'Claros',            '3100001', 'director@canal11.test',          NULL,       encode(sha256('canal11'::bytea),'hex'), 1), -- 1
- ('Roberto',       'Arteaga',           '3100002', 'jefe.prensa@canal11.test',       '70010002', encode(sha256('canal11'::bytea),'hex'), 2), -- 2
- ('Carla',         'Rojas Suárez',      '3100003', 'carla.rojas@canal11.test',       '71234580', encode(sha256('canal11'::bytea),'hex'), 3), -- 3
- ('Marcelo',       'Justiniano Égüez',  '3100004', 'marcelo.justiniano@canal11.test','72145566', encode(sha256('canal11'::bytea),'hex'), 3), -- 4
- ('Daniela',       'Vaca Pinto',        '3100005', 'daniela.vaca@canal11.test',      '76301122', encode(sha256('canal11'::bytea),'hex'), 3), -- 5
- ('Luis Fernando', 'Añez Rivero',       '3100006', 'luis.anez@canal11.test',         '69012345', encode(sha256('canal11'::bytea),'hex'), 3), -- 6
- ('Jorge',         'Mendoza Ribera',    '3100007', 'jorge.mendoza@canal11.test',     '70088912', encode(sha256('canal11'::bytea),'hex'), 4), -- 7
- ('Rubén',         'Cuéllar Antelo',    '3100008', 'ruben.cuellar@canal11.test',     '77654321', encode(sha256('canal11'::bytea),'hex'), 4), -- 8
- ('Wilmer',        'Choque Mamani',     '3100009', 'wilmer.choque@canal11.test',     '71987654', encode(sha256('canal11'::bytea),'hex'), 4), -- 9
- ('Patricia',      'Saucedo Melgar',    '3100010', 'patricia.saucedo@canal11.test',  '72233445', encode(sha256('canal11'::bytea),'hex'), 5), -- 10
- ('Andrés',        'Parada Rocha',      '3100011', 'andres.parada@canal11.test',     '60123987', encode(sha256('canal11'::bytea),'hex'), 5), -- 11
- ('Mariana',       'Terceros Lara',     '3100012', 'mariana.terceros@canal11.test',  '70456789', encode(sha256('canal11'::bytea),'hex'), 6), -- 12
- ('Gonzalo',       'Salvatierra Roca',  '3100013', 'gonzalo.salvatierra@canal11.test','75551234',encode(sha256('canal11'::bytea),'hex'), 6), -- 13
- ('Freddy',        'Montaño Vargas',    '3100014', 'freddy.montano@canal11.test',    '71112233', encode(sha256('canal11'::bytea),'hex'), 6), -- 14 conductor de TV
- ('Hugo',          'Flores Arias',      '3100015', 'area.tecnica@canal11.test',      '70010015', encode(sha256('canal11'::bytea),'hex'), 7); -- 15
+ ('Américo',       'Claros',            '3100001', 'director@canal11.test',          NULL,       '$2y$10$bgTQ8LSddyhQ1N7KoaCnIOjM/oGDh26g.HsEPXQ8u8Z.VJFAnkDUy', 1), -- 1
+ ('Roberto',       'Arteaga',           '3100002', 'jefe.prensa@canal11.test',       '70010002', '$2y$10$P6b1x3H4wMRyUCWXiHFLneTcNe8bqHnkWVICGbA/dmbUazPVF8dCy', 2), -- 2
+ ('Carla',         'Rojas Suárez',      '3100003', 'carla.rojas@canal11.test',       '71234580', '$2y$10$gJJXaRxXt3QXilqEZNrjk.ffGik4fnHj6mPl7A2rNY5gEH4wOroaa', 3), -- 3
+ ('Marcelo',       'Justiniano Égüez',  '3100004', 'marcelo.justiniano@canal11.test','72145566', '$2y$10$5N/WcTlET.tIT/PeBh4kCuo/yO/xYJVBY.OOxibAKKPv54QVsMau.', 3), -- 4
+ ('Daniela',       'Vaca Pinto',        '3100005', 'daniela.vaca@canal11.test',      '76301122', '$2y$10$zNK4gjRAQiVKrbvEqvn6QenBYgCXGcCw15F2iMij2fgzBwJb9UBYy', 3), -- 5
+ ('Luis Fernando', 'Añez Rivero',       '3100006', 'luis.anez@canal11.test',         '69012345', '$2y$10$1YzyRdv40c6wbvnwE56Ek.vPBjTXdltO/08s1J.8M/ye9fcWm8Dii', 3), -- 6
+ ('Jorge',         'Mendoza Ribera',    '3100007', 'jorge.mendoza@canal11.test',     '70088912', '$2y$10$syEfiRkIye2e5uW3vUoUgepNNrciuWfZ0/2qnKHEBYHhkFgDDvXwG', 4), -- 7
+ ('Rubén',         'Cuéllar Antelo',    '3100008', 'ruben.cuellar@canal11.test',     '77654321', '$2y$10$kVxNd6Cka9X14w6ZwWeNTOM9AkeC3CzsIcYsfgjbhTKEas8PgnCTq', 4), -- 8
+ ('Wilmer',        'Choque Mamani',     '3100009', 'wilmer.choque@canal11.test',     '71987654', '$2y$10$4/x0RQSnDfQmWvsNZV2hrehgeemnocmWHPoztP8O6zy7g1mMlsZQW', 4), -- 9
+ ('Patricia',      'Saucedo Melgar',    '3100010', 'patricia.saucedo@canal11.test',  '72233445', '$2y$10$i0Vc.SmWAmgta78pwpqGuOaVh1rrcunrdMzYDVD3jXUEBs/lGzKNu', 5), -- 10
+ ('Andrés',        'Parada Rocha',      '3100011', 'andres.parada@canal11.test',     '60123987', '$2y$10$2kWNWreig1pBg6p3DLNBQuc3zHPQEdpKEf.oQYyGvhGpvXKGpu/K.', 5), -- 11
+ ('Mariana',       'Terceros Lara',     '3100012', 'mariana.terceros@canal11.test',  '70456789', '$2y$10$..vs1tiHW.fQOKFQ5yY3JeQY1ipRFiw/SKlWsQNzNSrLPWahltub.', 6), -- 12
+ ('Gonzalo',       'Salvatierra Roca',  '3100013', 'gonzalo.salvatierra@canal11.test','75551234','$2y$10$C.bCPHqNpEn8nibi6R381emi7hyY8pvo2u346qsPrY5PdnRwgk9lm', 6), -- 13
+ ('Freddy',        'Montaño Vargas',    '3100014', 'freddy.montano@canal11.test',    '71112233', '$2y$10$VfC/Wq45UunMeY/i0hYwn..8SkXUN.UlB2NzS8GNNRreRW4jk1eTO', 6), -- 14 conductor de TV
+ ('Hugo',          'Flores Arias',      '3100015', 'area.tecnica@canal11.test',      '70010015', '$2y$10$q4xW/EO5dRqkIiEJpmDZauqNQQXvbS7FqttMPdar/QBe2qaMChRUm', 7); -- 15
 
 -- <<PERMISOS: generado desde el catálogo de comandos>>
 -- Cada comando del sistema y los roles que pueden ejecutarlo. AYUDA no necesita permiso.
