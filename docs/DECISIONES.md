@@ -19,6 +19,7 @@ Lo que rige el código. Los análisis completos están en `../../docs/revision_g
 | D11 | Catálogo declarativo de comandos (`CommandSpec`), CRUD genérico para los comandos simples y handlers propios para los que tienen reglas | Son 112 comandos; menos código y menos errores | 13/10/2026 |
 | D12 | `CommandProcessor` abre y cierra la transacción; la bitácora se escribe en otra transacción, siempre | Si el comando falla, igual queda registrado (R2) | 13/10/2026 |
 | D13 | Los errores de PostgreSQL pasan por `TraductorErrores` (nombre de la restricción → mensaje); nunca se reenvía el texto crudo | Mensajes claros (RNF-22) y no mostrar detalles internos | 13/10/2026 |
+| D14 | **El Jefe de Prensa redacta notas** (antes H3). Tiene ficha de personal con el cargo nuevo `jefe_prensa` y el permiso ENVNOT. Su nota sigue el mismo flujo que las demás: INSNOT → ENVNOT → APRNOT u OBSNOT | `nota.autor_id` exige una ficha de personal; así no cambia la tabla `nota` y el historial de revisión queda igual para todos | 13/10/2026 |
 
 ## Pendientes
 
@@ -26,7 +27,6 @@ Cada una tiene una propuesta. Si nadie del grupo objeta antes de la rama indicad
 
 | # | Tema | Propuesta | Se decide antes de |
 |---|---|---|---|
-| H3 | El Jefe de Prensa tiene INSNOT, pero `nota.autor_id` exige una ficha de personal y él no tiene; tampoco tiene ENVNOT | Quitarle INSNOT. Sigue corrigiendo (UPDNOT, GUINOT), aprobando y observando | `feat/cu05-notas` |
 | M8 | Respuesta a AYUDA de un remitente no registrado | «No está registrado en el sistema. Contacte al Director del canal.» | `feat/bucle-principal` |
 | L8 | Comillas `"` dentro de un parámetro | No se admiten: error de formato con un ejemplo | `feat/parser-comandos` |
 | — | Un parámetro vacío `""` en un UPD | Significa «no cambiar» (`col = COALESCE(?, col)`) | `feat/procesador-y-ayuda` |
