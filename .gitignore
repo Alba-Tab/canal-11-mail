@@ -8,7 +8,10 @@ config.properties
 *.log
 *.lock
 *.lck
+*.pid
 logs/
+# JDK portable (solo si se usa uno en la carpeta de la aplicación)
+jdk/
 
 # IDE
 .idea/
