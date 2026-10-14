@@ -2,6 +2,7 @@ package bo.edu.uagrm.ficct.canal11.negocio;
 
 import bo.edu.uagrm.ficct.canal11.datos.Fila;
 import bo.edu.uagrm.ficct.canal11.datos.Repositorio;
+import bo.edu.uagrm.ficct.canal11.negocio.catalogo.Catalogo;
 import bo.edu.uagrm.ficct.canal11.negocio.catalogo.Parametros;
 
 import java.sql.Connection;
@@ -27,9 +28,10 @@ public final class Contexto {
     private final Parametros parametros;
     private final String cuerpo;
     private final Clock reloj;
+    private final Catalogo catalogo;
 
     public Contexto(Connection conexion, Repositorio repositorio, Remitente remitente, String codigo,
-                    Parametros parametros, String cuerpo, Clock reloj) {
+                    Parametros parametros, String cuerpo, Clock reloj, Catalogo catalogo) {
         this.conexion = conexion;
         this.repositorio = repositorio;
         this.remitente = remitente;
@@ -37,6 +39,12 @@ public final class Contexto {
         this.parametros = parametros;
         this.cuerpo = cuerpo == null ? "" : cuerpo;
         this.reloj = reloj;
+        this.catalogo = catalogo;
+    }
+
+    /** El catálogo de comandos (INSPRM verifica que el comando exista). */
+    public Catalogo catalogo() {
+        return catalogo;
     }
 
     public Remitente remitente() {
