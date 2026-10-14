@@ -153,7 +153,7 @@ public final class CommandProcessor implements ProcesadorCorreo {
         } catch (ErrorNegocio e) {
             return errorDeComando(e.getMessage(), "", spec, usuarioId);
         }
-        return ejecutar(c, spec, new Contexto(c, repositorio, remitente.get(), spec.codigo(), p, s.cuerpo(), reloj));
+        return ejecutar(c, spec, new Contexto(c, repositorio, remitente.get(), spec.codigo(), p, s.cuerpo(), reloj, catalogo));
     }
 
     /** Ejecuta la acción en una transacción; cualquier error la deshace. */

@@ -1,5 +1,7 @@
 package bo.edu.uagrm.ficct.canal11.negocio.catalogo;
 
+import bo.edu.uagrm.ficct.canal11.negocio.ErrorNegocio;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Collections;
@@ -36,6 +38,13 @@ public final class Parametros {
             }
         }
         return true;
+    }
+
+    /** En un UPD: falla si no llegó ningún dato para cambiar. */
+    public void requerirAlguno(String... nombres) throws ErrorNegocio {
+        if (todosVacios(nombres)) {
+            throw ErrorNegocio.de("indique al menos un dato para modificar (un parámetro vacío deja el dato como está)");
+        }
     }
 
     public Object get(String nombre) {

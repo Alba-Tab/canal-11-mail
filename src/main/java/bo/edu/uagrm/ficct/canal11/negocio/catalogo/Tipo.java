@@ -61,7 +61,7 @@ public final class Tipo {
     }
 
     /** Convierte un valor ya sin espacios a los costados y no vacío. */
-    Object convertir(String valor, String parametro) throws ErrorNegocio {
+    public Object convertir(String valor, String parametro) throws ErrorNegocio {
         return conversor.convertir(valor, parametro);
     }
 
