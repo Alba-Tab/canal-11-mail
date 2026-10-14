@@ -55,6 +55,16 @@ export CANAL11_BD_PRUEBA_URL=jdbc:postgresql://localhost:5432/db_grupo14sa_test 
 
 La primera prueba carga `db/script_db_grupo14sa.sql` y `db/datos_prueba.sql`, y cada prueba deshace sus cambios. Como el script **borra todas las tablas**, solo se acepta una base con «test» en el nombre. También corren las 21 pruebas de `db/pruebas_integridad.sql`.
 
+## Desplegar en el servidor
+
+La aplicación corre en `www.tecnoweb.org.bo`. La guía paso a paso está en [docs/despliegue.md](docs/despliegue.md). En resumen:
+
+```bash
+scripts/subir.sh grupo14sa@www.tecnoweb.org.bo
+```
+
+Después, en el servidor, dentro de `~/canal11`: crear `config.properties`, correr `scripts/verificar-servidor.sh su.correo@gmail.com` y `scripts/cargar-bd.sh`, y arrancar con `scripts/run.sh`. Para operarla: `scripts/estado.sh` y `scripts/stop.sh`.
+
 ## Configurar y correr
 
 ```bash
