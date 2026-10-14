@@ -89,7 +89,15 @@ Qué hace al arrancar:
 
 Corre **una sola copia**: si ya hay otra, la segunda avisa y termina (bloqueo en `canal11.lock`). Para detenerla, **Ctrl+C** o `kill`. Termina el correo en curso, envía las respuestas pendientes y escribe «Aplicación detenida» en el log.
 
-Por ahora la respuesta es provisional: identifica al remitente, responde AYUDA y confirma los comandos recibidos. Los comandos se habilitan por caso de uso.
+Cada correo pasa por `CommandProcessor`:
+
+1. `AYUDA` responde los comandos del rol del remitente, con un ejemplo de cada uno (sale de `rol_permiso`: si el Director otorga o quita un permiso, la ayuda cambia sola).
+2. El comando tiene que existir en el catálogo (`negocio/catalogo` y un paquete `negocio/cuNN` por caso de uso) y el rol del remitente tiene que tener el permiso (R1). Un remitente no registrado o inactivo recibe «No está registrado en el sistema. Contacte al Director del canal.».
+3. Se validan la cantidad y el tipo de los parámetros: fechas `AAAA-MM-DD`, horas `HH:MM`, duraciones `mm:ss`, estados sin tildes. Los opcionales se envían vacíos (`""`); en un UPD, un parámetro vacío deja el dato como está. Un LIS sin corchetes lista todo (`"*"`); un INS, UPD o DEL sin corchetes responde el formato con un ejemplo.
+4. El comando se ejecuta en una transacción: si algo falla, no queda nada a medias. Los errores de la base se responden con un mensaje claro, nunca con el texto de PostgreSQL.
+5. Todo correo queda en `bitacora_comando` (también los rechazados), con la contraseña de INSUSU enmascarada.
+
+Los comandos que todavía no están habilitados responden un aviso y figuran en AYUDA como «(próximamente)».
 
 ## Estructura
 
@@ -102,8 +110,10 @@ canal11-mail/
     ├── App.java         arranque
     ├── config/          configuración y log
     ├── presentacion/    MailVerificationThread, SendEmailThread y clientes POP3/SMTP
-    ├── negocio/         CommandParser, CommandProcessor, HTMLResponseBuilder y catálogo de comandos
-    └── datos/           DBConnection, repositorio y traductor de errores
+    ├── negocio/         CommandParser, CommandProcessor, HTMLResponseBuilder y AYUDA
+    │   ├── catalogo/    ficha de cada comando: parámetros con su tipo y ejemplo
+    │   └── cu01 … cu08/ comandos de cada caso de uso con sus reglas
+    └── datos/           DBConnection, repositorio, CRUD genérico, bitácora y traductor de errores
 ```
 
 ## Cómo se trabaja

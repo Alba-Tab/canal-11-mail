@@ -4,8 +4,7 @@ package bo.edu.uagrm.ficct.canal11.negocio;
  * Lo que la capa de Presentación le pide a la de Negocio por cada correo: procesarlo y devolver la
  * respuesta.
  *
- * <p>En la rama {@code feat/bucle-principal} lo implementa {@link ProcesadorInicial}; después lo
- * reemplaza {@code CommandProcessor}, con el catálogo completo de comandos.</p>
+ * <p>Lo implementa {@link CommandProcessor}; las pruebas de la capa de Presentación usan uno falso.</p>
  */
 @FunctionalInterface
 public interface ProcesadorCorreo {
