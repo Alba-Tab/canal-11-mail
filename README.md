@@ -97,7 +97,9 @@ Cada correo pasa por `CommandProcessor`:
 4. El comando se ejecuta en una transacción: si algo falla, no queda nada a medias. Los errores de la base se responden con un mensaje claro, nunca con el texto de PostgreSQL.
 5. Todo correo queda en `bitacora_comando` (también los rechazados), con la contraseña de INSUSU enmascarada.
 
-Los comandos que todavía no están habilitados responden un aviso y figuran en AYUDA como «(próximamente)».
+Los comandos que todavía no están habilitados responden un aviso y figuran en AYUDA como «(próximamente)». Hoy están habilitados los del CU-01 al CU-06 (103 comandos); faltan la analítica (CU-07) y los reportes y la bitácora (CU-08).
+
+EXPESC responde con la escaleta como adjunto `.html` (correo `multipart/mixed`): se abre en el navegador y se puede imprimir.
 
 ## Estructura
 
