@@ -44,6 +44,11 @@ class CatalogoTest {
     }
 
     @Test
+    void todosLosComandosTienenSuAccion() {
+        assertEquals(List.of(), catalogo.todos().stream().filter(CommandSpec::pendiente).map(CommandSpec::codigo).toList());
+    }
+
+    @Test
     void validaLaCantidadDeParametros() {
         CommandSpec delusu = catalogo.buscar("DELUSU").orElseThrow();
         assertEquals("Error: se esperaba 1 parámetro (id) y no llegó ninguno",
