@@ -4,6 +4,7 @@ import bo.edu.uagrm.ficct.canal11.config.Config;
 import bo.edu.uagrm.ficct.canal11.negocio.Enmascarador;
 import bo.edu.uagrm.ficct.canal11.negocio.HTMLResponseBuilder;
 import bo.edu.uagrm.ficct.canal11.negocio.ProcesadorCorreo;
+import bo.edu.uagrm.ficct.canal11.negocio.Adjunto;
 import bo.edu.uagrm.ficct.canal11.negocio.RespuestaCorreo;
 import bo.edu.uagrm.ficct.canal11.negocio.SolicitudCorreo;
 import bo.edu.uagrm.ficct.canal11.presentacion.correo.CorreoSaliente;
@@ -185,13 +186,16 @@ public final class MailVerificationThread extends Thread {
             return;
         }
         try {
-            envio.encolar(CorreoSaliente.builder()
+            CorreoSaliente.Builder correo = CorreoSaliente.builder()
                     .de(config.correoSistema(), NOMBRE_REMITENTE)
                     .para(m.remitente())
                     .asunto(respuesta.asunto())
                     .html(respuesta.html())
-                    .enRespuestaA(m.messageId())
-                    .build());
+                    .enRespuestaA(m.messageId());
+            for (Adjunto a : respuesta.adjuntos()) {
+                correo.adjunto(a.nombre(), a.tipoContenido(), a.contenido());
+            }
+            envio.encolar(correo.build());
         } catch (IllegalArgumentException ex) {
             LOG.warning("No se puede responder a «" + m.remitente() + "»: " + ex.getMessage());
         }

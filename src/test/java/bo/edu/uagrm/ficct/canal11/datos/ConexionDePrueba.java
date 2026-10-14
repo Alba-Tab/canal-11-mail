@@ -7,6 +7,7 @@ import java.lang.reflect.Proxy;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Savepoint;
+import java.sql.Statement;
 
 /**
  * Conexión para probar comandos sin dejar rastro en la base de pruebas.
@@ -58,6 +59,11 @@ public final class ConexionDePrueba implements AutoCloseable {
                     boolean auto = (Boolean) args[0];
                     if (!auto && savepoint == null) {
                         savepoint = real.setSavepoint();
+                        // Una transacción nueva empieza con las restricciones diferibles en su modo inicial
+                        // (diferido); sin esto, el SET CONSTRAINTS ALL IMMEDIATE del comando anterior seguiría vigente
+                        try (Statement st = real.createStatement()) {
+                            st.execute("SET CONSTRAINTS ALL DEFERRED");
+                        }
                     } else if (auto && savepoint != null) {
                         real.releaseSavepoint(savepoint);
                         savepoint = null;

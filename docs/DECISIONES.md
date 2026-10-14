@@ -33,11 +33,9 @@ Lo que rige el código. Los análisis completos están en `../../docs/revision_g
 | D25 | Lectura del guion (antes M6): `LISNOT["id"]` con un solo número devuelve la nota completa con su guion, sus rótulos, su material y la duración estimada. Así la lee el Presentador | No hace falta un comando nuevo ni darle LISVER | 14/10/2026 |
 | D26 | Filtros (antes L5): `LISNOT["","aprobada"]` o `LISNOT["aprobada"]` filtran solo por estado (también `hoy` y `manana`); en LISMAT, un número es el id de la nota y un texto es el estado del material | Se puede pedir de varias formas sin error | 14/10/2026 |
 | D27 | Autoría (A5): el autor o el Jefe de Prensa modifican una nota, su guion, sus rótulos y la envían a revisión. El material lo registran el periodista, el camarógrafo o el editor; lo elimina el autor de la nota o un editor. Una nota emitida o dada de baja ya no se modifica. Para redactar hace falta una ficha de personal activa (`nota.autor_id`) | El historial de cada nota queda a nombre de quien la escribió | 14/10/2026 |
+| D28 | Material sin terminar (antes M10): LISESC marca el ítem con «material sin terminar» si su nota tiene material que no está `listo`, junto con «nota en revisión» (D24) y «última hora». Son alertas: no impiden guardar | El Jefe de Prensa ve lo que falta sin que el sistema lo frene | 14/10/2026 |
+| D29 | Estados de la escaleta: solo en `borrador` se agregan, mueven, flotan o dan de baja ítems; `cerrada` se puede reabrir; `emitida` exige estar cerrada, la hora y la duración reales, y que todas las notas programadas estén aprobadas (R23); al emitir, los ítems programados pasan a emitidos y sus notas a emitidas. Las duraciones reales de los ítems se cargan con UPDITE en cualquier estado. Un ítem agregado menos de una hora antes del inicio queda marcado como de última hora (lo usa ANAEMI). UPDITE con `orden` lo pone en esa posición y renumera el bloque | Lo emitido queda fijo para la analítica, y reordenar es tan simple como decir la posición | 14/10/2026 |
 
 ## Pendientes
 
-Cada una tiene una propuesta. Si nadie del grupo objeta antes de la rama indicada, se implementa la propuesta.
-
-| # | Tema | Propuesta | Se decide antes de |
-|---|---|---|---|
-| M10 | ¿LISESC avisa si una nota tiene material sin terminar? | Sí, como alerta del ítem (no impide guardar) | `feat/cu06-escaleta` |
+Ninguna. Las propuestas de las ramas 10 a 17 se aplicaron como D18 a D29; si el grupo cambia alguna, se corrige en una rama `fix/` y se actualiza aquí.

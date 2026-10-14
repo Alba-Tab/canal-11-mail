@@ -3,6 +3,8 @@ package bo.edu.uagrm.ficct.canal11.negocio;
 import bo.edu.uagrm.ficct.canal11.datos.Fila;
 import bo.edu.uagrm.ficct.canal11.negocio.HTMLResponseBuilder.Tipo;
 
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,6 +19,7 @@ public final class Resultado {
     private final String titulo;
     private String mensaje;
     private final StringBuilder cuerpo = new StringBuilder();
+    private final List<Adjunto> adjuntos = new ArrayList<>();
 
     private Resultado(Tipo tipo, String titulo, String mensaje) {
         this.tipo = tipo;
@@ -104,6 +107,16 @@ public final class Resultado {
     public Resultado agregarAlMensaje(String texto) {
         mensaje = mensaje + texto;
         return this;
+    }
+
+    /** Adjunta una página HTML (EXPESC). */
+    public Resultado adjuntoHtml(String nombre, String html) {
+        adjuntos.add(new Adjunto(nombre, "text/html; charset=UTF-8", html.getBytes(StandardCharsets.UTF_8)));
+        return this;
+    }
+
+    public List<Adjunto> adjuntos() {
+        return List.copyOf(adjuntos);
     }
 
     public Tipo tipo() {
