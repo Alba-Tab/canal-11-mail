@@ -200,8 +200,14 @@ class CommandProcessorTest {
     }
 
     @Test
-    void unComandoTodaviaNoHabilitadoAvisa() {
+    void unComandoTodaviaNoHabilitadoAvisa() throws Exception {
+        probador.close();
+        CommandSpec sinAccion = CommandSpec.de("CU-07", "ANAPER", "Producción por periodista")
+                .param("fecha_desde", Tipo.FECHA).param("fecha_hasta", Tipo.FECHA)
+                .ejemplo("ANAPER[\"2026-10-01\",\"2026-10-31\"]").build();
+        probador = Probador.abrir(new Catalogo(List.of(sinAccion)));
         String t = probador.texto(JEFE_PRENSA, "ANAPER[\"2026-10-01\",\"2026-10-31\"]");
         assertTrue(t.contains("todavía no está habilitado"), t);
+        assertTrue(probador.texto(JEFE_PRENSA, "AYUDA").contains("(próximamente)"));
     }
 }

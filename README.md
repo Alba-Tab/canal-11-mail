@@ -97,7 +97,7 @@ Cada correo pasa por `CommandProcessor`:
 4. El comando se ejecuta en una transacción: si algo falla, no queda nada a medias. Los errores de la base se responden con un mensaje claro, nunca con el texto de PostgreSQL.
 5. Todo correo queda en `bitacora_comando` (también los rechazados), con la contraseña de INSUSU enmascarada.
 
-Los comandos que todavía no están habilitados responden un aviso y figuran en AYUDA como «(próximamente)». Hoy están habilitados los del CU-01 al CU-06 y el CU-08 (108 comandos); falta la analítica (CU-07). Los reportes reciben un período de hasta 366 días y llevan una fila de totales.
+Están habilitados los 112 comandos de los 8 casos de uso. Los reportes (REP) y los indicadores (ANA) reciben un período de hasta 366 días y llevan una fila de totales; en un ANA, las tres últimas letras nombran el indicador (PER, EMI, COB, NOT), no una tabla.
 
 EXPESC responde con la escaleta como adjunto `.html` (correo `multipart/mixed`): se abre en el navegador y se puede imprimir.
 
