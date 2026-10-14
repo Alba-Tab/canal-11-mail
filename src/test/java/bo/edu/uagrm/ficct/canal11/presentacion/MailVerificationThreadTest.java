@@ -108,6 +108,18 @@ class MailVerificationThreadTest {
     }
 
     @Test
+    void losAdjuntosDeLaRespuestaVanEnElCorreo() {
+        pop.agregar(correo("carla.rojas@gmail.com", "EXPESC[\"1\"]", ""));
+        ProcesadorCorreo conAdjunto = s -> new RespuestaCorreo("Re: " + s.asunto(), "<p>adjunta</p>",
+                List.of(new bo.edu.uagrm.ficct.canal11.negocio.Adjunto("escaleta.html", "text/html; charset=UTF-8",
+                        "<html>escaleta</html>".getBytes(StandardCharsets.UTF_8))));
+        lector(conAdjunto, () -> { }).procesarUnaVez();
+        String bytes = new String(enviados.get(0).aBytes(Clock.systemUTC()), StandardCharsets.US_ASCII);
+        assertTrue(bytes.contains("multipart/mixed"), bytes);
+        assertTrue(bytes.contains("filename=\"escaleta.html\""), bytes);
+    }
+
+    @Test
     void procesaVariosEnOrdenUnoPorSesion() {
         for (String a : new String[]{"LISCOB[\"1\"]", "LISCOB[\"2\"]", "LISCOB[\"3\"]"}) {
             pop.agregar(correo("carla.rojas@gmail.com", a, ""));

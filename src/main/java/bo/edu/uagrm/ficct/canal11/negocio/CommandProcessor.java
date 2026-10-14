@@ -80,8 +80,11 @@ public final class CommandProcessor implements ProcesadorCorreo {
         this.menuAyuda = new MenuAyuda(repositorio, catalogo);
     }
 
-    /** Cómo terminó un correo: la página HTML y lo que se anota en la bitácora. */
-    private record Atencion(String html, String resumen, boolean exito, Integer usuarioId, String comando) {
+    /** Cómo terminó un correo: la página HTML, los adjuntos y lo que se anota en la bitácora. */
+    private record Atencion(String html, String resumen, boolean exito, Integer usuarioId, String comando, List<Adjunto> adjuntos) {
+        Atencion(String html, String resumen, boolean exito, Integer usuarioId, String comando) {
+            this(html, resumen, exito, usuarioId, comando, List.of());
+        }
     }
 
     @Override
@@ -109,7 +112,7 @@ public final class CommandProcessor implements ProcesadorCorreo {
             }
         }
         LOG.info((a.exito() ? "Atendido" : "Rechazado") + " «" + asuntoVisible + "» de " + s.remitente() + ": " + a.resumen());
-        return new RespuestaCorreo("Re: " + (asuntoVisible.isBlank() ? "(sin asunto)" : asuntoVisible), a.html());
+        return new RespuestaCorreo("Re: " + (asuntoVisible.isBlank() ? "(sin asunto)" : asuntoVisible), a.html(), a.adjuntos());
     }
 
     private Atencion atender(Connection c, SolicitudCorreo s, ComandoParseado parseado) throws SQLException {
@@ -167,7 +170,8 @@ public final class CommandProcessor implements ProcesadorCorreo {
                 st.execute("SET CONSTRAINTS ALL IMMEDIATE");
             }
             c.commit();
-            return new Atencion(HTMLResponseBuilder.pagina(r.titulo(), r.contenidoHtml()), r.mensaje(), true, usuarioId, spec.codigo());
+            return new Atencion(HTMLResponseBuilder.pagina(r.titulo(), r.contenidoHtml()), r.mensaje(), true, usuarioId, spec.codigo(),
+                    r.adjuntos());
         } catch (ErrorNegocio e) {
             deshacer(c);
             return errorDeComando(e.getMessage(), e.detalleHtml(), spec, usuarioId);
