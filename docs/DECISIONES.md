@@ -23,6 +23,7 @@ Lo que rige el código. Los análisis completos están en `../../docs/revision_g
 | D15 | El asunto se lee con tolerancia: se quitan `Re:`, `RV:`, `Fwd:` (también repetidos y `RE[2]:`); las comillas tipográficas cuentan como rectas; el código puede ir en minúsculas; se aceptan espacios entre parámetros y parámetros sin comillas si no tienen comas (`DELUSU[3]`); el texto después de `]` se ignora. **Una comilla dentro de un parámetro es error de formato** (antes L8) | Los clientes de correo reales (iPhone, respuestas, asuntos partidos) y la regla de «aceptar de todo» | 13/10/2026 |
 | D16 | Remitente no registrado o inactivo (antes M8): a AYUDA se le responde «No está registrado en el sistema. Contacte al Director del canal.»; a un comando, «Error: no tiene permiso para ejecutar CODIGO.» más la misma frase | Flujo alternativo A1 del CU-01; quien escribe sabe a quién acudir | 13/10/2026 |
 | D17 | El asunto de la respuesta es «Re: » más el asunto del pedido con los datos sensibles enmascarados, y el `Message-ID` del pedido va en `In-Reply-To`: Gmail la muestra en el mismo hilo | Seguir la conversación sin filtrar contraseñas (D6) | 13/10/2026 |
+| D18 | Un parámetro vacío `""` en un UPD significa «no cambiar» (`col = COALESCE(?, col)`). La cantidad de parámetros es estricta (sección 4.2.4): los opcionales se envían vacíos; solo los marcados como omitibles al final (por ejemplo, el `estado` de M4 o el `cargo` de DISPER) pueden no enviarse. Un LIS sin corchetes o con `[]` vale `["*"]` | Así un UPD cambia un solo dato sin reescribir los demás, y el formato sigue siendo el del documento | 14/10/2026 |
 
 ## Pendientes
 
@@ -30,7 +31,6 @@ Cada una tiene una propuesta. Si nadie del grupo objeta antes de la rama indicad
 
 | # | Tema | Propuesta | Se decide antes de |
 |---|---|---|---|
-| — | Un parámetro vacío `""` en un UPD | Significa «no cambiar» (`col = COALESCE(?, col)`) | `feat/procesador-y-ayuda` |
 | M4 | Volver atrás: reactivar un usuario, una ficha o un programa; devolver a `programado` un ítem flotado | Los UPD de esas tablas aceptan `estado`; UPDITE acepta `programado` | `feat/cu01-usuarios` |
 | L6 | INSCPE: ¿la función debe coincidir con el cargo? | Sí, salvo `conductor`, que también puede hacerlo un presentador | `feat/cu04-coberturas` |
 | M7 | Reprogramar: UPDCOB o RETCOB + DUPCOB | Antes de salir, UPDCOB; si volvieron sin cumplirla, RETCOB `reprogramada` + DUPCOB | `feat/cu04-coberturas` |

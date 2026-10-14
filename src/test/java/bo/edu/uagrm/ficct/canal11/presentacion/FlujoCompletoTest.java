@@ -2,7 +2,8 @@ package bo.edu.uagrm.ficct.canal11.presentacion;
 
 import bo.edu.uagrm.ficct.canal11.datos.BaseDatosPrueba;
 import bo.edu.uagrm.ficct.canal11.datos.Repositorio;
-import bo.edu.uagrm.ficct.canal11.negocio.ProcesadorInicial;
+import bo.edu.uagrm.ficct.canal11.negocio.CommandProcessor;
+import bo.edu.uagrm.ficct.canal11.negocio.catalogo.Catalogo;
 import bo.edu.uagrm.ficct.canal11.presentacion.correo.FakePop3Server;
 import bo.edu.uagrm.ficct.canal11.presentacion.correo.FakeSmtpServer;
 import bo.edu.uagrm.ficct.canal11.presentacion.correo.MensajeCorreo;
@@ -34,7 +35,8 @@ class FlujoCompletoTest {
             var config = MailVerificationThreadTest.config(pop.puerto(), smtp.puerto(), 1_048_576);
             SendEmailThread emisor = new SendEmailThread("127.0.0.1", smtp.puerto(), 2_000, "tecnoweb.org.bo", Clock.systemUTC(), 10);
             MailVerificationThread lector = new MailVerificationThread(config,
-                    new ProcesadorInicial(BaseDatosPrueba.conexion(), new Repositorio(10)), emisor, () -> { });
+                    new CommandProcessor(BaseDatosPrueba.conexion()::obtener, new Repositorio(10), Catalogo.completo(), Clock.systemUTC()),
+                    emisor, () -> { });
 
             emisor.start();
             assertEquals(2, lector.procesarUnaVez());

@@ -6,7 +6,8 @@ import bo.edu.uagrm.ficct.canal11.config.Registro;
 import bo.edu.uagrm.ficct.canal11.datos.DBConnection;
 import bo.edu.uagrm.ficct.canal11.datos.Repositorio;
 import bo.edu.uagrm.ficct.canal11.negocio.CoberturasEnCurso;
-import bo.edu.uagrm.ficct.canal11.negocio.ProcesadorInicial;
+import bo.edu.uagrm.ficct.canal11.negocio.CommandProcessor;
+import bo.edu.uagrm.ficct.canal11.negocio.catalogo.Catalogo;
 import bo.edu.uagrm.ficct.canal11.presentacion.MailVerificationThread;
 import bo.edu.uagrm.ficct.canal11.presentacion.SendEmailThread;
 
@@ -107,7 +108,7 @@ public final class App {
 
         SendEmailThread emisor = new SendEmailThread(config, reloj);
         MailVerificationThread lector = new MailVerificationThread(config,
-                new ProcesadorInicial(db, repositorio), emisor,
+                new CommandProcessor(db::obtener, repositorio, Catalogo.completo(), reloj), emisor,
                 () -> {
                     int cambiadas = enCurso.actualizar(db.obtener());
                     if (cambiadas > 0) {
