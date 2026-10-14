@@ -22,6 +22,9 @@ import java.util.logging.Logger;
  *
  * <p>Uso: {@code java -Duser.timezone=America/La_Paz -jar canal11-mail.jar [config.properties]}</p>
  *
+ * <p>Verificación previa al despliegue (no borra correos ni envía nada; ver {@link Diagnostico}):
+ * {@code java -jar canal11-mail.jar --verificar config.properties su.correo@gmail.com}</p>
+ *
  * <p>Arma las tres capas y arranca los dos hilos: {@link MailVerificationThread}, que lee el buzón,
  * y {@link SendEmailThread}, que envía las respuestas. Se detiene con Ctrl+C o con {@code kill}: el
  * gancho de apagado termina el correo en curso y envía las respuestas pendientes.</p>
@@ -41,31 +44,57 @@ public final class App {
 
     public static void main(String[] args) {
         Registro.iniciarConsola(ZoneId.of("America/La_Paz"));
+        if (args.length > 0 && args[0].equals("--verificar")) {
+            // Modo de línea de comandos: el código de salida es la cantidad de fallas (para los scripts)
+            System.exit(verificar(args));
+        }
         Path archivo = Path.of(args.length > 0 ? args[0] : Config.ARCHIVO_POR_DEFECTO);
         Config config;
         try {
             config = Config.cargar(archivo);
-            Registro.iniciar(config.carpetaLogs(), config.zonaHoraria());
         } catch (Config.ConfigException e) {
             LOG.severe(e.getMessage());
+            Registro.terminar();
             return;
         } catch (Exception e) {
             LOG.log(Level.SEVERE, "No se pudo leer la configuración", e);
+            Registro.terminar();
             return;
         }
 
         try {
+            // Primero el bloqueo: una copia rechazada no abre el archivo de log de la que está corriendo
             Optional<BloqueoInstancia> bloqueo = BloqueoInstancia.tomar(config.archivoBloqueo());
             if (bloqueo.isEmpty()) {
                 LOG.severe("Ya hay otra copia de la aplicación corriendo (bloqueo en " + config.archivoBloqueo().toAbsolutePath()
                         + "). Esta copia termina.");
+                Registro.terminar();
                 return;
             }
             try (BloqueoInstancia b = bloqueo.get()) {
+                Registro.iniciar(config.carpetaLogs(), config.zonaHoraria());
                 ejecutar(config);
             }
         } catch (Exception e) {
             LOG.log(Level.SEVERE, "La aplicación terminó por un error", e);
+            Registro.terminar();
+        }
+    }
+
+    /** {@code --verificar [config.properties] correo@externo}. Devuelve la cantidad de fallas. */
+    private static int verificar(String[] args) {
+        if (args.length < 2) {
+            System.err.println("Uso: java -jar canal11-mail.jar --verificar [config.properties] su.correo@gmail.com");
+            return 2;
+        }
+        String archivo = args.length >= 3 ? args[1] : Config.ARCHIVO_POR_DEFECTO;
+        String correoExterno = args[args.length - 1];
+        Logger.getLogger("bo.edu.uagrm.ficct.canal11").setLevel(Level.WARNING);
+        try {
+            return new Diagnostico(Config.cargar(Path.of(archivo)), System.out).ejecutar(correoExterno);
+        } catch (Exception e) {
+            System.err.println("No se pudo leer la configuración: " + e.getMessage());
+            return 1;
         }
     }
 
