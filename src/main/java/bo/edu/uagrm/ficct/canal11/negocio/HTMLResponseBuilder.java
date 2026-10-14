@@ -1,5 +1,8 @@
 package bo.edu.uagrm.ficct.canal11.negocio;
 
+import bo.edu.uagrm.ficct.canal11.datos.Fila;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -9,8 +12,8 @@ import java.util.List;
  * Todo texto que viene de un usuario o de la base pasa por {@link #escapar(String)}: un dato con
  * {@code <script>} se muestra como texto y no se ejecuta.</p>
  *
- * <p>En esta versión arma la página y los mensajes (plantillas P3 y P5 de la revisión). Las tablas
- * de los listados y reportes (P2, P8, P9) se agregan con el procesador de comandos.</p>
+ * <p>Arma la página, los mensajes (plantillas P3, P4 y P5 de la revisión), el menú de AYUDA (P1),
+ * las tablas de los listados y reportes (P2, P9) y las fichas de un registro.</p>
  */
 public final class HTMLResponseBuilder {
 
@@ -99,5 +102,80 @@ public final class HTMLResponseBuilder {
     /** Respuesta de error completa: página con el mensaje en rojo. */
     public static String error(String mensaje) {
         return pagina("Error", mensaje(Tipo.ERROR, mensaje));
+    }
+
+    /**
+     * Error de un comando (plantilla P5): el motivo, el detalle opcional, el formato esperado y un
+     * ejemplo para copiar.
+     *
+     * @param detalleHtml HTML ya escapado (puede ser vacío)
+     */
+    public static String errorDeComando(String titulo, String mensaje, String detalleHtml, String formato, String ejemplo) {
+        StringBuilder sb = new StringBuilder(mensaje(Tipo.ERROR, mensaje));
+        sb.append(detalleHtml == null ? "" : detalleHtml);
+        if (formato != null) {
+            sb.append("<p style=\"margin:0 0 6px 0;\">Formato: ").append(codigo(formato)).append("</p>");
+        }
+        if (ejemplo != null) {
+            sb.append("<p style=\"margin:0 0 12px 0;\">Ejemplo: ").append(codigo(ejemplo)).append("</p>");
+        }
+        return pagina(titulo, sb.toString());
+    }
+
+    public static String subtitulo(String texto) {
+        return "<h3 style=\"margin:16px 0 8px 0;font-size:15px;color:#0b2e59;\">" + escapar(texto) + "</h3>";
+    }
+
+    /** Un texto para una celda: escapado y con los saltos de línea como {@code <br>} (guiones). */
+    public static String celda(String texto) {
+        return escapar(texto).replace("\r\n", "\n").replace("\n", "<br>");
+    }
+
+    /** Tabla con las filas de una consulta: las columnas son los alias de la consulta. */
+    public static String tabla(List<Fila> filas) {
+        if (filas.isEmpty()) {
+            return "";
+        }
+        List<String> encabezados = filas.get(0).columnas();
+        List<List<String>> celdas = new ArrayList<>();
+        for (Fila f : filas) {
+            List<String> fila = new ArrayList<>();
+            for (Object v : f.valores()) {
+                fila.add(celda(Formato.valor(v)));
+            }
+            celdas.add(fila);
+        }
+        return tablaHtml(encabezados.stream().map(HTMLResponseBuilder::escapar).toList(), celdas);
+    }
+
+    /** Tabla con celdas ya armadas en HTML (por ejemplo, con {@link #codigo(String)}). */
+    public static String tablaHtml(List<String> encabezadosHtml, List<List<String>> filasHtml) {
+        StringBuilder sb = new StringBuilder("<table style=\"border-collapse:collapse;width:100%;margin:0 0 12px 0;font-size:13px;\">");
+        sb.append("<thead><tr>");
+        for (String e : encabezadosHtml) {
+            sb.append("<th style=\"text-align:left;background:#eef2f7;border:1px solid #d0d7de;padding:6px 8px;\">").append(e).append("</th>");
+        }
+        sb.append("</tr></thead><tbody>");
+        int i = 0;
+        for (List<String> fila : filasHtml) {
+            String fondo = i++ % 2 == 0 ? "#ffffff" : "#f8fafc";
+            sb.append("<tr style=\"background:").append(fondo).append(";\">");
+            for (String c : fila) {
+                sb.append("<td style=\"border:1px solid #d0d7de;padding:6px 8px;vertical-align:top;\">").append(c).append("</td>");
+            }
+            sb.append("</tr>");
+        }
+        return sb.append("</tbody></table>").toString();
+    }
+
+    /** Los datos de un registro en dos columnas: campo y valor (plantilla P3). */
+    public static String ficha(Fila fila) {
+        List<List<String>> filas = new ArrayList<>();
+        List<String> columnas = fila.columnas();
+        List<Object> valores = fila.valores();
+        for (int i = 0; i < columnas.size(); i++) {
+            filas.add(List.of("<b>" + escapar(columnas.get(i)) + "</b>", celda(Formato.valor(valores.get(i)))));
+        }
+        return tablaHtml(List.of("Campo", "Valor"), filas);
     }
 }
