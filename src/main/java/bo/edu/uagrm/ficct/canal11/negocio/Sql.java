@@ -27,4 +27,13 @@ public final class Sql {
     public static String contiene(String texto) {
         return "%" + normal(texto).replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_") + "%";
     }
+
+    /**
+     * Un rango de fecha y hora legible: {@code 11:30–13:00} si es en el mismo día, o
+     * {@code 2026-10-15 22:00 a 2026-10-16 02:00} si cruza la medianoche.
+     */
+    public static String rango(String inicio, String fin) {
+        return "CASE WHEN " + inicio + "::date = " + fin + "::date THEN to_char(" + inicio + ", 'HH24:MI') || '–' || to_char(" + fin
+                + ", 'HH24:MI') ELSE to_char(" + inicio + ", 'YYYY-MM-DD HH24:MI') || ' a ' || to_char(" + fin + ", 'YYYY-MM-DD HH24:MI') END";
+    }
 }

@@ -26,6 +26,9 @@ Lo que rige el código. Los análisis completos están en `../../docs/revision_g
 | D18 | Un parámetro vacío `""` en un UPD significa «no cambiar» (`col = COALESCE(?, col)`). La cantidad de parámetros es estricta (sección 4.2.4): los opcionales se envían vacíos; solo los marcados como omitibles al final (por ejemplo, el `estado` de M4 o el `cargo` de DISPER) pueden no enviarse. Un LIS sin corchetes o con `[]` vale `["*"]` | Así un UPD cambia un solo dato sin reescribir los demás, y el formato sigue siendo el del documento | 14/10/2026 |
 | D19 | Volver atrás (antes M4): UPDUSU, UPDPER y UPDPRG aceptan un `estado` omitible al final (`activo`/`inactivo`), y UPDITE acepta `programado` para devolver un ítem flotado | Desactivar no borra (se conserva el historial), así que tiene que poder deshacerse por correo | 14/10/2026 |
 | D20 | El sistema se protege de quedar sin administración: siempre queda un Director activo; nadie se desactiva ni se quita el rol a sí mismo; los roles Director y Jefe de Prensa no se renombran ni se eliminan (el código los reconoce por su nombre); el permiso de INSPRM, INSRPM, DELRPM, LISPRM y LISRPM no se borra ni se le quita al Director. INSPRM solo acepta comandos del catálogo y con su caso de uso | Todo se administra por correo: si el Director pierde esos comandos, nadie puede devolvérselos | 14/10/2026 |
+| D21 | INSCPE y UPDCPE (antes L6): la función corresponde al cargo; la de `conductor` la hace un conductor o un presentador, y el Jefe de Prensa puede ir como `periodista` (D14) | Que un editor no salga como camarógrafo por error | 14/10/2026 |
+| D22 | Reprogramar (antes M7): antes de salir, UPDCOB cambia la misma cobertura y vuelve a validar al equipo asignado (si hay un choque, no cambia nada); si volvieron sin cumplirla, RETCOB `reprogramada` y DUPCOB crea la nueva fecha, enlazada con `cobertura_origen_id`. DUPCOB no copia el equipo: lo muestra para asignarlo con INSCPE, que valida los horarios | Las dos formas quedan claras y ninguna salta la validación de choques | 14/10/2026 |
+| D23 | Retorno y cancelación: RETCOB lo registra el Jefe de Prensa o alguien asignado a la cobertura; `cumplida` exige que la cobertura ya haya empezado. RETCOB y DELCOB cierran las entregas abiertas de la cobertura. Una cobertura cumplida, cancelada o reprogramada ya no se modifica | El retorno lo informa quien estuvo; lo terminado queda como historial para los reportes | 14/10/2026 |
 
 ## Pendientes
 
@@ -33,8 +36,6 @@ Cada una tiene una propuesta. Si nadie del grupo objeta antes de la rama indicad
 
 | # | Tema | Propuesta | Se decide antes de |
 |---|---|---|---|
-| L6 | INSCPE: ¿la función debe coincidir con el cargo? | Sí, salvo `conductor`, que también puede hacerlo un presentador | `feat/cu04-coberturas` |
-| M7 | Reprogramar: UPDCOB o RETCOB + DUPCOB | Antes de salir, UPDCOB; si volvieron sin cumplirla, RETCOB `reprogramada` + DUPCOB | `feat/cu04-coberturas` |
 | M3 | GUINOT sobre una nota que ya está en una escaleta | Se permite; la nota vuelve a revisión y LISESC la marca con una alerta | `feat/cu05-notas` |
 | M6 | Con qué comando lee el Presentador el guion completo | `LISNOT["id"]` con un solo id devuelve la nota con su guion | `feat/cu05-notas` |
 | L5 | LISNOT y LISMAT filtrando solo por estado | `LISNOT["","aprobada"]`; en LISMAT, un número es id de nota y un texto es estado | `feat/cu05-notas` |
