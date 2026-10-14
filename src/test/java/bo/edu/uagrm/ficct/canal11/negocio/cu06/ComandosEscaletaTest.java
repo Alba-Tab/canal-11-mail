@@ -48,7 +48,9 @@ class ComandosEscaletaTest {
 
     @AfterEach
     void cerrar() throws Exception {
-        p.close();
+        if (p != null) {
+            p.close();
+        }
     }
 
     private void contiene(String texto, String... esperados) {

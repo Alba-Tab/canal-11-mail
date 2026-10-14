@@ -32,7 +32,9 @@ class CommandProcessorTest {
 
     @AfterEach
     void cerrar() throws Exception {
-        probador.close();
+        if (probador != null) {
+            probador.close();
+        }
     }
 
     private Fila ultimaBitacora() throws Exception {
