@@ -195,12 +195,14 @@ public final class Tipo {
         return sinTildes.toLowerCase(Locale.ROOT).strip().replaceAll("[\\s-]+", "_");
     }
 
-    /** «a, b o c». */
+    /** «a, b o c» (y «u» antes de una palabra que empieza con o: «especial u otro»). */
     public static String enumerar(List<String> valores) {
         if (valores.size() == 1) {
             return valores.get(0);
         }
-        return String.join(", ", valores.subList(0, valores.size() - 1)) + " o " + valores.get(valores.size() - 1);
+        String ultimo = valores.get(valores.size() - 1);
+        String conjuncion = normalizarOpcion(ultimo).matches("^h?o.*") ? " u " : " o ";
+        return String.join(", ", valores.subList(0, valores.size() - 1)) + conjuncion + ultimo;
     }
 
     // ------------------------------------------------------------------ verdadero o falso

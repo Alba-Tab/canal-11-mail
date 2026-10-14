@@ -106,6 +106,7 @@ class TipoTest {
         assertEquals("baja_medica", t.convertir("Baja médica", "tipo"));
         assertEquals("baja_medica", t.convertir("baja-medica", "tipo"));
         assertEquals("Error: «p» debe ser permiso, vacacion o baja_medica (llegó «feriado»)", error(t, "feriado"));
+        assertEquals("noticiero, especial u otro", Tipo.enumerar(java.util.List.of("noticiero", "especial", "otro")));
     }
 
     @Test
